@@ -9,6 +9,11 @@ pydantic-settings>=2.6
 cryptography>=43.0
 python-jose[cryptography]>=3.3
 passlib[bcrypt]>=1.7
+# NOTE: passlib's bcrypt backend has a known incompatibility with
+# bcrypt>=4.1 (a self-test inside passlib itself raises ValueError on
+# newer bcrypt's stricter 72-byte password handling). Pin bcrypt below
+# that until passlib ships a fix — https://github.com/pyca/bcrypt/issues/684
+bcrypt==4.0.1
 qrcode[pil]>=8.0
 reportlab>=4.2
 pytest>=8.3

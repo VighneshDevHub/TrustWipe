@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import Response
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db
+from app.api.deps import get_current_user, get_db
+from app.models.user import User
 from app.models.wipe_record import LedgerEntry, WipeRecord
 from app.schemas.wipe import CertificateOut
 from app.services.pdf_service import generate_certificate_pdf
@@ -37,6 +38,43 @@ async def _fetch_certificate(certificate_id: str, db: AsyncSession) -> Certifica
         ledger_sequence_number=ledger_entry.sequence_number,
         created_at=wipe_record.created_at,
     )
+
+
+@router.get("", response_model=list[CertificateOut])
+async def list_certificates(
+    db: AsyncSession = Depends(get_db),
+    _current_user: User = Depends(get_current_user),
+    limit: int = 100,
+    offset: int = 0,
+) -> list[CertificateOut]:
+    """Powers the recycler dashboard table. Protected — requires a valid
+    JWT, since this exposes the full history of every device processed."""
+    result = await db.execute(
+        select(WipeRecord, LedgerEntry)
+        .join(LedgerEntry, LedgerEntry.wipe_record_id == WipeRecord.id)
+        .order_by(desc(LedgerEntry.sequence_number))
+        .limit(limit)
+        .offset(offset)
+    )
+    rows = result.all()
+    return [
+        CertificateOut(
+            certificate_id=wr.certificate_id,
+            device_serial=wr.device_serial,
+            device_model=wr.device_model,
+            device_type=wr.device_type,
+            wipe_method=wr.wipe_method,
+            started_at=wr.started_at,
+            completed_at=wr.completed_at,
+            verification_passed=wr.verification_passed,
+            operator=wr.operator,
+            report_hash=wr.report_hash,
+            signature=wr.signature,
+            ledger_sequence_number=le.sequence_number,
+            created_at=wr.created_at,
+        )
+        for wr, le in rows
+    ]
 
 
 @router.get("/{certificate_id}", response_model=CertificateOut)

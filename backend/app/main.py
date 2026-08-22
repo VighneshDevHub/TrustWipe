@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.v1 import certificates, verify, wipes
+from app.api.v1 import auth, certificates, verify, wipes
 from app.core.config import get_settings
 from app.db.session import init_models
 
@@ -36,6 +36,7 @@ app.add_middleware(
 app.include_router(wipes.router, prefix="/api/v1")
 app.include_router(certificates.router, prefix="/api/v1")
 app.include_router(verify.router, prefix="/api/v1")
+app.include_router(auth.router, prefix="/api/v1")
 
 
 @app.get("/health", tags=["health"])
