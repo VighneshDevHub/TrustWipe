@@ -11,7 +11,6 @@ from app.services import ledger_service
 
 router = APIRouter(prefix="/wipes", tags=["wipes"])
 
-
 @router.post("", response_model=CertificateOut, status_code=201)
 async def submit_wipe_report(
     report: WipeReportIn,

@@ -62,3 +62,4 @@ async def verify_certificate(
         overall_verified=overall,
         detail=detail,
     )
+
