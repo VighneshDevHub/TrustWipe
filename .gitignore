@@ -1,0 +1,65 @@
+### Python (backend, wipe-agent) ###
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+### Databases (dev/test artifacts - never commit real data) ###
+*.db
+*.sqlite
+*.sqlite3
+test_*.db
+
+### Environment / secrets ###
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+### Node / Next.js (frontend) ###
+node_modules/
+.next/
+out/
+build/
+dist/
+.turbo/
+next-env.d.ts
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+
+### Docker ###
+*.pid
+
+### Generated demo artifacts (regenerate, don't commit) ###
+sample_certificate.pdf
+*.img
+
+### IDE / editor ###
+.vscode/
+.idea/
+*.swp
+*.swo
+
+### OS clutter ###
+.DS_Store
+Thumbs.db
+
+### Alembic (keep migration scripts, ignore generated cache) ###
+# alembic/versions/  <- do NOT ignore this, migrations must be committed
