@@ -89,3 +89,20 @@ async def test_verify_detects_tampered_certificate(client):
     body = verify_resp_after.json()
     assert body["signature_valid"] is False
     assert body["overall_verified"] is False
+
+
+@pytest.mark.asyncio
+async def test_get_certificate_pdf_returns_valid_pdf(client):
+    create_resp = await client.post("/api/v1/wipes", json=SAMPLE_REPORT)
+    cert_id = create_resp.json()["certificate_id"]
+
+    pdf_resp = await client.get(f"/api/v1/certificates/{cert_id}/pdf")
+    assert pdf_resp.status_code == 200
+    assert pdf_resp.headers["content-type"] == "application/pdf"
+    assert pdf_resp.content.startswith(b"%PDF")
+
+
+@pytest.mark.asyncio
+async def test_get_certificate_pdf_404_for_unknown_id(client):
+    pdf_resp = await client.get("/api/v1/certificates/does-not-exist/pdf")
+    assert pdf_resp.status_code == 404
