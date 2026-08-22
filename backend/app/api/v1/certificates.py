@@ -38,4 +38,4 @@ async def get_certificate(
         ledger_sequence_number=ledger_entry.sequence_number,
         created_at=wipe_record.created_at,
     )
-
+    
